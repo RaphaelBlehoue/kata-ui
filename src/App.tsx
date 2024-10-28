@@ -1,5 +1,6 @@
 import ExchangeRateUpdater from "@creditAgricole/components/ExchangeRateUpdater";
 import { RateProvider } from "@creditAgricole/contexts/RateProvider";
+import { CurrencyConverter } from "@creditAgricole/components/CurrencyConverter";
 
 const App = () => {
   return (
@@ -9,6 +10,7 @@ const App = () => {
           <h1 className="text-3xl mb-6 font-bold text-[#00694E]">
             Convertisseur EUR/USD au taux de change réel
           </h1>
+          <CurrencyConverter />
           <ExchangeRateUpdater />
         </div>
       </RateProvider>

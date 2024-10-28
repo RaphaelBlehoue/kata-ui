@@ -1,24 +1,16 @@
-import { useState } from 'react'
+import ExchangeRateUpdater from "@creditAgricole/components/ExchangeRateUpdater";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+const App = () => {
   return (
-    <>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+    <main className="container-main">
+      <div className="text-center bg-white rounded-lg shadow-lg p-6 max-w-4xl mx-auto">
+        <h1 className="text-3xl mb-6 font-bold text-[#00694E]">
+          Convertisseur EUR/USD au taux de change réel
+        </h1>
+        <ExchangeRateUpdater />
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    </main>
+  );
+};
 
-export default App
+export default App;

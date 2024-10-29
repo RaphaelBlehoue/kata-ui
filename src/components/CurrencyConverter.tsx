@@ -1,27 +1,40 @@
 import  { ChangeEvent, useContext, useEffect, useState } from "react";
+import { HiArrowsRightLeft } from "react-icons/hi2";
 import { RateContext } from "@creditAgricole/contexts/RateContext";
 import { usePolling } from "@creditAgricole/hooks/usePolling";
+
 export const CurrencyConverter = () => {
-  const [euroAmount, setEuroAmount] = useState<number>(0);
-  const [usdAmount, setUsdAmount] = useState<number>(0);
+  const [amount, setAmount] = useState<number>(0);
+  const [isEuro, setIsEuro] = useState<boolean>(true); // Devise par default
+  const [convertedAmount, setConvertedAmount] = useState<number>(0);
+
   const currentExChangeRate = useContext(RateContext);
 
   // Si updateExChangeRateForUSD devient une dependance  de useEffect, il faut un useCallback ici
   const updateExChangeRateForUSD = () => {
-    setUsdAmount(parseFloat((euroAmount * currentExChangeRate).toFixed(3)));
+    const converted = isEuro
+      ? amount * currentExChangeRate
+      : amount / currentExChangeRate;
+    setConvertedAmount(parseFloat(converted.toFixed(3)));
   };
 
   usePolling(updateExChangeRateForUSD, 3000);
 
-  const handleExChangeRateEURChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleAmountExChangeRateChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value: number = parseFloat(e.target.value);
-    setEuroAmount(value || 0);
-    updateExChangeRateForUSD();
+    setAmount(value || 0);
+  };
+
+
+  const handleSwitch = () => {
+    setIsEuro(!isEuro);
+    setAmount(convertedAmount);
+    console.log("switch is work");
   };
 
   useEffect(() => {
     updateExChangeRateForUSD();
-  }, [currentExChangeRate, euroAmount]);
+  }, [currentExChangeRate, amount, isEuro]);
 
 
   return (
@@ -31,23 +44,51 @@ export const CurrencyConverter = () => {
           htmlFor="amount"
           className="block text-left text-sm font-medium text-gray-700"
         >
-          Montant en Euro:
+          Montant:
         </label>
-        <div className="mt-1 flex items-center border border-gray-300 rounded-lg px-4 py-2">
-          <input
-            id="amount"
-            type="text"
-            placeholder="Saisissez un montant en EUR"
-            value={euroAmount}
-            onChange={handleExChangeRateEURChange}
-            className="flex-1 bg-transparent outline-none text-lg text-gray-900"
-          />
-          <span className="text-gray-500 ml-2">EUR</span>
+        <div className="flex gap-5">
+          <div className="w-full max-w-96 mt-1 flex items-center border border-gray-300 rounded-lg px-4 py-2">
+            <input
+              id="amount"
+              type="text"
+              placeholder="Saisissez un montant en EUR"
+              value={amount}
+              onChange={handleAmountExChangeRateChange}
+              className="flex-1 bg-transparent outline-none text-lg text-gray-900"
+            />
+            <button className="px-4 py-2 border-gray-300 rounded-r-md">
+              {"EUR"}
+            </button>
+          </div>
+          <button
+            onClick={handleSwitch}
+            className="font-bold text-2xl text-[#049093] hover:text-green-700 transition-transform"
+          >
+            <HiArrowsRightLeft />
+          </button>
+          <div className="w-full max-w-96 mt-1 flex items-center border border-gray-300 rounded-lg px-4 py-2">
+            <input
+              id="amount"
+              type="text"
+              readOnly
+              placeholder="Saisissez un montant en USD"
+              value={convertedAmount}
+              onChange={handleAmountExChangeRateChange}
+              className="flex-1 bg-transparent outline-none text-lg text-gray-900"
+            />
+            <button className="px-4 py-2 border-gray-300 rounded-r-md">
+              {"USD"}
+            </button>
+          </div>
         </div>
+
         <div className="mt-4 text-center text-gray-700">
           <p className="text-lg text-left font-semibold">
-            € {euroAmount} EUR ={" "}
-            <span className="text-[#049093]"> $ {usdAmount} USD</span>
+            € {amount.toLocaleString("fr-FR")} EUR ={" "}
+            <span className="text-[#049093]">
+              {" "}
+              $ {convertedAmount.toLocaleString("en-US")} USD
+            </span>
           </p>
         </div>
       </div>

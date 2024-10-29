@@ -7,7 +7,7 @@ const ExchangeRateUpdater = () => {
   return (
     <div className="mt-4 text-center text-gray-700">
       <p className="text-sm text-left text-gray-500">
-        Taux de Change EUR/USD à {new Date().toLocaleTimeString()} est de :
+        Taux de Change variable EUR/USD à {new Date().toLocaleTimeString()} est de :
         <span className="text-[#049093]">{currentExChangeRate.toFixed(3)}</span>
       </p>
     </div>

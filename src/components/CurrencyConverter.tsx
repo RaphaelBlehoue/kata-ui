@@ -2,19 +2,21 @@ import  { ChangeEvent, useContext, useEffect, useState } from "react";
 import { HiArrowsRightLeft } from "react-icons/hi2";
 import { RateContext } from "@creditAgricole/contexts/RateContext";
 import { usePolling } from "@creditAgricole/hooks/usePolling";
+import { FixedExChangeRateInput } from "@creditAgricole/components/FixedExChangeRateInput";
 
 export const CurrencyConverter = () => {
   const [amount, setAmount] = useState<number>(0);
   const [isEuro, setIsEuro] = useState<boolean>(true); // On considère que la Devise par default c'est EUR
   const [convertedAmount, setConvertedAmount] = useState<number>(0);
+  const [customRate, setCustomRate] = useState<number | null>(null);
 
   const currentExChangeRate = useContext(RateContext);
 
+  const effectiveRate = customRate ?? currentExChangeRate;
+
   // Si updateExChangeRateForUSD devient une dependance  de useEffect, il faut un useCallback ici
   const updateExChangeRateForUSD = () => {
-    const converted = isEuro
-      ? amount * currentExChangeRate
-      : amount / currentExChangeRate;
+    const converted = isEuro ? amount * effectiveRate : amount / effectiveRate;
     setConvertedAmount(parseFloat(converted.toFixed(3)));
   };
 
@@ -25,6 +27,10 @@ export const CurrencyConverter = () => {
     setAmount(value || 0);
   };
 
+    const handleCustomRateChange = (rate: number | null) => {
+      setCustomRate(rate);
+    };
+
 
   const handleSwitch = () => {
     setIsEuro(!isEuro);
@@ -33,7 +39,7 @@ export const CurrencyConverter = () => {
 
   useEffect(() => {
     updateExChangeRateForUSD();
-  }, [currentExChangeRate, amount, isEuro]);
+  }, [effectiveRate, amount, isEuro]);
 
 
   return (
@@ -80,16 +86,20 @@ export const CurrencyConverter = () => {
             </button>
           </div>
         </div>
-
-        <div className="mt-4 text-center text-gray-700">
-          <p className="text-lg text-left font-semibold">
-            € {amount.toLocaleString("fr-FR")} {isEuro ? "EUR" : "USD"} ={" "}
-            <span className="text-[#049093]">
-              {" "}
-              $ {convertedAmount.toLocaleString("en-US")}{" "}
-              {isEuro ? "USD" : "EUR"}
-            </span>
-          </p>
+        <div className="flex justify-between">
+          <div className="mt-4 text-center text-gray-700">
+            <p className="text-lg text-left font-semibold">
+              € {amount.toLocaleString("fr-FR")} {isEuro ? "EUR" : "USD"} ={" "}
+              <span className="text-[#049093]">
+                {" "}
+                $ {convertedAmount.toLocaleString("en-US")}{" "}
+                {isEuro ? "USD" : "EUR"}
+              </span>
+            </p>
+          </div>
+          <div className="mt-4 text-center text-gray-700">
+            <FixedExChangeRateInput onRateChange={handleCustomRateChange} />
+          </div>
         </div>
       </div>
     </div>

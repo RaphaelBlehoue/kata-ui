@@ -5,7 +5,7 @@ import { usePolling } from "@creditAgricole/hooks/usePolling";
 
 export const CurrencyConverter = () => {
   const [amount, setAmount] = useState<number>(0);
-  const [isEuro, setIsEuro] = useState<boolean>(true); // Devise par default
+  const [isEuro, setIsEuro] = useState<boolean>(true); // On considère que la Devise par default c'est EUR
   const [convertedAmount, setConvertedAmount] = useState<number>(0);
 
   const currentExChangeRate = useContext(RateContext);
@@ -29,7 +29,6 @@ export const CurrencyConverter = () => {
   const handleSwitch = () => {
     setIsEuro(!isEuro);
     setAmount(convertedAmount);
-    console.log("switch is work");
   };
 
   useEffect(() => {
@@ -57,7 +56,7 @@ export const CurrencyConverter = () => {
               className="flex-1 bg-transparent outline-none text-lg text-gray-900"
             />
             <button className="px-4 py-2 border-gray-300 rounded-r-md">
-              {"EUR"}
+              {isEuro ? "EUR" : "USD"}
             </button>
           </div>
           <button
@@ -77,17 +76,18 @@ export const CurrencyConverter = () => {
               className="flex-1 bg-transparent outline-none text-lg text-gray-900"
             />
             <button className="px-4 py-2 border-gray-300 rounded-r-md">
-              {"USD"}
+              {isEuro ? "USD" : "EUR"}
             </button>
           </div>
         </div>
 
         <div className="mt-4 text-center text-gray-700">
           <p className="text-lg text-left font-semibold">
-            € {amount.toLocaleString("fr-FR")} EUR ={" "}
+            € {amount.toLocaleString("fr-FR")} {isEuro ? "EUR" : "USD"} ={" "}
             <span className="text-[#049093]">
               {" "}
-              $ {convertedAmount.toLocaleString("en-US")} USD
+              $ {convertedAmount.toLocaleString("en-US")}{" "}
+              {isEuro ? "USD" : "EUR"}
             </span>
           </p>
         </div>
